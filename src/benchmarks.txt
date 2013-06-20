@@ -1,0 +1,96 @@
+- Application was compiled as Debug 32bit
+- Downsampled image size was 160x90 with 32bit colors
+- Vsync was off in all tests
+- Power supply was connected for mobile benchmarks
+
+Windows 7 x64 Professional
+----------------------------------------------------------------------
+- CPU: Intel Core i7 960
+- GPU: Nvidia Quadro 600, Driver 310.90
+- OpenGL: 4.3
+TEST: Default rendering, frame time 0.39 ms
+TEST: Read using glReadPixels. Reading disabled., frame time 0.54 ms
+TEST: Read using glReadPixels. Reading GL_BGRA., frame time 0.70 ms
+TEST: Read using glReadPixels. Reading GL_RGBA., frame time 0.67 ms
+TEST: Read using glGetTexImage. Reading disabled., frame time 0.54 ms
+TEST: Read using glGetTexImage. Reading GL_BGRA., frame time 0.88 ms
+TEST: Read using glGetTexImage. Reading GL_RGBA., frame time 0.87 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading disabled., frame time 0.55 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_BGRA., frame time 0.64 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_RGBA., frame time 0.55 ms
+
+----------------------------------------------------------------------
+- CPU: Intel Core i5 480M
+- GPU: AMD Radeon 5650M, Driver Catalyst 13.1 WHQL, 9.012-121219a-151587C-ATI
+- OpenGL: 4.2, Driver 6.14.10.12002
+TEST: Default rendering, frame time 0.30 ms
+TEST: Read using glReadPixels. Reading disabled., frame time 0.41 ms
+TEST: Read using glReadPixels. Reading GL_BGRA., frame time 0.80 ms
+TEST: Read using glReadPixels. Reading GL_RGBA., frame time 0.77 ms
+TEST: Read using glGetTexImage. Reading disabled., frame time 0.41 ms
+TEST: Read using glGetTexImage. Reading GL_BGRA., frame time 0.81 ms
+TEST: Read using glGetTexImage. Reading GL_RGBA., frame time 0.81 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading disabled., frame time 0.42 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_BGRA., frame time 0.51 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_RGBA., frame time 0.49 ms
+
+----------------------------------------------------------------------
+- CPU: Intel Core i5 480M
+- GPU: Integrated HD Graphics, Driver 8.15.10.2827
+- OpenGL: 2.1
+TEST: Default rendering, frame time 0.73 ms
+TEST: Read using glReadPixels. Reading disabled., frame time 0.76 ms
+TEST: Read using glReadPixels. Reading GL_BGRA., frame time 1.75 ms
+TEST: Read using glReadPixels. Reading GL_RGBA., frame time 1.52 ms
+TEST: Read using glGetTexImage. Reading disabled., frame time 0.78 ms
+TEST: Read using glGetTexImage. Reading GL_BGRA., frame time 5.26 ms
+TEST: Read using glGetTexImage. Reading GL_RGBA., frame time 2.56 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading disabled., frame time 0.79 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_BGRA., frame time 1.77 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_RGBA., frame time 1.70 ms
+
+
+Ubuntu 12.10
+----------------------------------------------------------------------
+- CPU: Intel Core i5 480M
+- GPU: Integrated HD Graphics, Driver Mesa DRI Intel(R) Ironlake Mobile 
+- OpenGL: 2.1, GLX 1.4, MESA 9.0
+- vsync turned off by "export vblank_mode=0"
+TEST: Default rendering, frame time 1.13 ms
+TEST: Read using glReadPixels. Reading disabled., frame time 1.46 ms
+TEST: Read using glReadPixels. Reading GL_BGRA., frame time 3.25 ms
+TEST: Read using glReadPixels. Reading GL_RGBA., frame time 16.91 ms
+TEST: Read using glGetTexImage. Reading disabled., frame time 1.97 ms
+TEST: Read using glGetTexImage. Reading GL_BGRA., frame time 3.40 ms
+TEST: Read using glGetTexImage. Reading GL_RGBA., frame time 16.77 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading disabled., frame time 1.89 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_BGRA., frame time 4.22 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_RGBA., frame time 17.05 ms
+
+----------------------------------------------------------------------
+- CPU: Intel Core i3-2120T
+- GPU: Integrated HD Graphics 2000, Driver Mesa DRI Intel(R) Sandybridge Desktop x86/MMX/SSE2
+- OpenGL: 3.0, GLX 1.4, MESA 9.0.2
+- vsync turned off by "export vblank_mode=0"
+TEST: Default rendering, frame time 0.78 ms
+TEST: Read using glReadPixels. Reading disabled., frame time 1.14 ms
+TEST: Read using glReadPixels. Reading GL_BGRA., frame time 1.30 ms
+TEST: Read using glReadPixels. Reading GL_RGBA., frame time 1.77 ms
+TEST: Read using glGetTexImage. Reading disabled., frame time 1.13 ms
+TEST: Read using glGetTexImage. Reading GL_BGRA., frame time 1.29 ms
+TEST: Read using glGetTexImage. Reading GL_RGBA., frame time 1.55 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading disabled., frame time 1.13 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_BGRA., frame time 1.30 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_RGBA., frame time 1.77 ms
+
+
+Rasbian
+-----------------------------------------------------------------------
+- CPU: Raspberry Pi BCM2835 ARM11
+- GPU: Videocore IV
+- OpenGL: ES 2.0, EGL 1.4
+- vsync turned off using eglSwapInterval(0)
+TEST: Default rendering, frame time 2.37 ms
+TEST: Read using glReadPixels. Reading disabled., frame time 4.49 ms
+TEST: Read using glReadPixels. Reading GL_BGRA., frame time 4.54 ms
+TEST: Read using glReadPixels. Reading GL_RGBA., frame time 6.25 ms
