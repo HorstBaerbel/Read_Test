@@ -1,7 +1,7 @@
 Read_Test
 ========
 
-A benchmark for scaling and reading the OpenGL / OpenGL ES 1.x backbuffer to CPU memory. See my corresponding [blog page](http://lektiondestages.blogspot.de/2013/01/reading-opengl-backbuffer-to-system.html). 
+A benchmark for scaling and reading the OpenGL / OpenGL ES 1.x/2.0 backbuffer to CPU memory. See my corresponding [blog page](http://lektiondestages.blogspot.de/2013/01/reading-opengl-backbuffer-to-system.html). 
 It should work in Windows, Ubuntu and Raspbian using WGL, GLX and EGL.
 
 License
@@ -19,7 +19,10 @@ cmake .
 make
 </pre>
 
-GCC 4.7 is needed to compile. There is a CMake variable called `GLSystem` which you can set to either `Desktop OpenGL` or `OpenGL ES` for the system you want to use. On the Raspberry Pi it is automagically set to use OpenGL ES 1.x. You might also need OpenGL. If you don't have `/usr/include/GL/gl.h` and `libGL` try installing the MESA development package with:
+GCC 4.7 is needed to compile. 
+There is a CMake variable called `GLSystem` which you can set to either `Desktop OpenGL` or `OpenGL ES 2.0` for the system you want to use. 
+On the Raspberry Pi it is automagically set to use OpenGL ES 2.0. 
+You might also need OpenGL. If you don't have `/usr/include/GL/gl.h` and `libGL` try installing the MESA development package with:
 ```
 sudo apt-get libgl1-mesa-dev
 ```
