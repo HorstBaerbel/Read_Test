@@ -84,7 +84,25 @@ TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_BGRA., frame 
 TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_RGBA., frame time 1.77 ms
 
 
-Rasbian
+Ubuntu 13.10
+----------------------------------------------------------------------
+- CPU: Intel Core i5 480M
+- GPU: Integrated HD Graphics, Driver Mesa DRI Intel(R) Ironlake Mobile 
+- OpenGL: 2.1, GLX 1.4, MESA 9.2.1
+- vsync turned off by "export vblank_mode=0"
+TEST: Default rendering, frame time 1.11 ms
+TEST: Read using glReadPixels. Reading disabled., frame time 0.92 ms
+TEST: Read using glReadPixels. Reading GL_BGRA., frame time 0.93 ms
+TEST: Read using glReadPixels. Reading GL_RGBA., frame time 0.92 ms
+TEST: Read using glGetTexImage. Reading disabled., frame time 1.47 ms
+TEST: Read using glGetTexImage. Reading GL_BGRA., frame time 3.61 ms
+TEST: Read using glGetTexImage. Reading GL_RGBA., frame time 16.65 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading disabled., frame time 1.74 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_BGRA., frame time 1.48 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_RGBA., frame time 16.57 ms
+
+
+Raspbian
 -----------------------------------------------------------------------
 - CPU: Raspberry Pi BCM2835 ARM11
 - GPU: Videocore IV
