@@ -6,9 +6,10 @@
 Test_glReadPixels::Test_glReadPixels(std::shared_ptr<ContextBase> & c, const int width, const int height, const int depth)
     : GLTest(c, width, height, depth), downsampleData(nullptr)
 {
+	//make our context current
+	context->makeCurrent();
 	//get viewport size
 	glGetIntegerv(GL_VIEWPORT, (GLint *)&viewPort);
-
 #ifdef USE_OPENGL_ES
 	//create full-sized framebuffer for OpenGL ES
 	backbuffer = std::shared_ptr<GLFramebuffer>(new GLFramebuffer(c));
@@ -23,7 +24,6 @@ Test_glReadPixels::Test_glReadPixels(std::shared_ptr<ContextBase> & c, const int
 		std::cout << "Created " << viewPort[2] << "x" << viewPort[3] << "x" << depth*8 << " backbuffer." << std::endl;
 	}
 #endif
-
 	//create downsampled framebuffer
 	downsample = std::shared_ptr<GLFramebuffer>(new GLFramebuffer(c));
 	//create texture for downsampled framebuffer and attach
@@ -36,7 +36,6 @@ Test_glReadPixels::Test_glReadPixels(std::shared_ptr<ContextBase> & c, const int
 	else {
 		std::cout << "Created " << width << "x" << height << "x" << depth*8 << " downsampled framebuffer." << std::endl;
 	}
-
 	downsampleData = new unsigned char[width*height*depth];
 }
 
@@ -67,7 +66,6 @@ bool Test_glReadPixels::pre()
 bool Test_glReadPixels::post()
 {
 	GLTest::post();
-
 #ifdef USE_OPENGL_ES
 	//blit framebuffer to downsampled buffer
 	backbuffer->blitToScreen(viewPort[2], viewPort[3]);
@@ -76,7 +74,6 @@ bool Test_glReadPixels::post()
 	//blit framebuffer to downsampled buffer
     downsample->blitFromScreen(viewPort[2], viewPort[3]);
 #endif
-
 	if (mode > 0) {
 		//bind buffer for reading
 		downsample->bind();
@@ -88,17 +85,13 @@ bool Test_glReadPixels::post()
 			glReadPixels(0, 0, downsample->getWidth(), downsample->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, downsampleData);
 		}
 	}
-
 	//Uncomment this to see downsampling in action
 	//downsample->blitToScreen(downsample->getWidth(), downsample->getHeight());
-
 	downsample->unbind();
-
 #ifdef USE_OPENGL_ES
 	//reset viewport to whole screen
 	glViewport(0, 0, viewPort[2], viewPort[3]);
 #endif
-
 	return true;
 }
 

@@ -33,6 +33,8 @@
 GLFramebuffer::GLFramebuffer(std::shared_ptr<ContextBase> & c)
 	: context(c), glId(0)
 {
+	//make our context current
+	context->makeCurrent();
 #ifdef USE_OPENGL_ES
     //create statics on first run
     if (quadShader == 0) {
@@ -45,6 +47,11 @@ GLFramebuffer::GLFramebuffer(std::shared_ptr<ContextBase> & c)
 #endif
     //generate id for framebuffer object
     context->glGenFramebuffers(1, &glId);
+	//check for errors
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR) {
+        std::cout << "Error 0x" << std::hex << error << " while creating GLFramebuffer" << std::endl;
+	}
 }
 
 bool GLFramebuffer::attach(const GLenum attachmentPoint, std::shared_ptr<GLTexture2D> & texture)
@@ -135,7 +142,7 @@ bool GLFramebuffer::attach(const GLenum attachmentPoint, std::shared_ptr<GLTextu
 	return false;
 }
 
-const GLFramebuffer::Attachment & GLFramebuffer::getAttachment(const GLenum attachmentPoint) const
+GLFramebuffer::Attachment GLFramebuffer::getAttachment(const GLenum attachmentPoint) const
 {
 	std::vector<Attachment>::const_iterator ait = attachments.cbegin();
 	while(ait != attachments.cend()) {

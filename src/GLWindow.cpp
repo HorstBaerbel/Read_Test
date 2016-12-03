@@ -258,7 +258,6 @@ GLWindow::GLWindow(const int width, const int height, std::string title, const b
 	oldXMode = *modes[0];
 	XF86VidModeModeInfo bestMode = oldXMode;
 	int bestModeIndex = -1;
-
 	//if we want fullscreen find a matching fullscreen mode
 	if (fullScreen) {
 findModesAgain:
@@ -288,7 +287,6 @@ findModesAgain:
 	}
 	//free video modes
 	XFree(modes);
-
 	//build framebuffer config
 	int iAttributes[] = {
 		GLX_X_RENDERABLE, True,
@@ -301,22 +299,23 @@ findModesAgain:
 		GLX_DEPTH_SIZE, format.depthSize,
 		GLX_STENCIL_SIZE, format.stencilSize,
 		GLX_DOUBLEBUFFER, (format.doubleBuffering ? GL_TRUE : GL_FALSE),
+        GLX_CONTEXT_MAJOR_VERSION_ARB, 2,
+        GLX_CONTEXT_MINOR_VERSION_ARB, 1,
 		None, None,
 		None, None,
 		None, None,
 		None, None
 	}; //this crashes if GLX_SAMPLES_ARB is set, but 1. thus we do it differently
 	if (!full) {
-		iAttributes[20] = GLX_DRAWABLE_TYPE;
-		iAttributes[21] = GLX_WINDOW_BIT;
+		iAttributes[24] = GLX_DRAWABLE_TYPE;
+		iAttributes[25] = GLX_WINDOW_BIT;
 	}
         if (format.samplesPerPixel > 1) {
-		iAttributes[22] = GLX_SAMPLE_BUFFERS_ARB;
-		iAttributes[23] = GL_TRUE;
-		iAttributes[24] = GLX_SAMPLES;
-		iAttributes[25] = format.samplesPerPixel;
+		iAttributes[26] = GLX_SAMPLE_BUFFERS_ARB;
+		iAttributes[27] = GL_TRUE;
+		iAttributes[28] = GLX_SAMPLES;
+		iAttributes[29] = format.samplesPerPixel;
 	}
-
 	//get a matching framebuffer config
 	int fbCount = 0;
 	GLXFBConfig * fbConfig = glXChooseFBConfig(xDisplay, xScreenId, iAttributes, &fbCount);
@@ -336,7 +335,8 @@ findModesAgain:
 		for (int i = 0; i < fbCount; i++ ) {
 			XVisualInfo * visual = glXGetVisualFromFBConfig(xDisplay, fbConfig[i]);
 			if (visual != nullptr) {
-				int sampleBuffers, samples;
+				int sampleBuffers = 0;
+                int samples = 0;
 				glXGetFBConfigAttrib(xDisplay, fbConfig[i], GLX_SAMPLE_BUFFERS, &sampleBuffers);
 				glXGetFBConfigAttrib(xDisplay, fbConfig[i], GLX_SAMPLES, &samples);
 				//check if this fits better
@@ -356,7 +356,27 @@ findModesAgain:
 	}
 	//use best configuration found
 	GLXFBConfig bestFbConfig = fbConfig[bestFbIndex];
-	std::cout << "Using config #" << bestFbIndex << "." << std::endl;
+	std::cout << "Using config #" << bestFbIndex << ":" << std::endl;
+    int redBits = 0; glXGetFBConfigAttrib(xDisplay, bestFbConfig, GLX_RED_SIZE, &redBits );
+    int greenBits = 0; glXGetFBConfigAttrib(xDisplay, bestFbConfig, GLX_GREEN_SIZE, &greenBits );
+    int blueBits = 0; glXGetFBConfigAttrib(xDisplay, bestFbConfig, GLX_BLUE_SIZE, &blueBits );
+    int alphaBits = 0; glXGetFBConfigAttrib(xDisplay, bestFbConfig, GLX_ALPHA_SIZE, &alphaBits );
+    int sampleCount = 0; glXGetFBConfigAttrib(xDisplay, bestFbConfig, GLX_SAMPLES, &sampleCount );
+    std::cout << "   Color buffer: R" << redBits << "G"  << greenBits << "B" << blueBits << "A" << alphaBits;
+    if (sampleCount > 0)
+    {
+        std::cout << ", " << sampleCount << "x-multisampling" << std::endl;
+    }
+    else
+    {
+    std::cout << ", no multisampling" << std::endl;
+    }
+    int depthBits = 0; glXGetFBConfigAttrib(xDisplay, bestFbConfig, GLX_DEPTH_SIZE, &depthBits );
+    int stencilBits = 0; glXGetFBConfigAttrib(xDisplay, bestFbConfig, GLX_STENCIL_SIZE, &stencilBits );
+    std::cout << "   Depth buffer: D" << depthBits << "S"  << stencilBits << std::endl;
+    int doubleBuffer = 0; glXGetFBConfigAttrib(xDisplay, bestFbConfig, GLX_DOUBLEBUFFER, &doubleBuffer );
+    std::cout << "   " << (doubleBuffer ? "Double buffering" : "Single buffering") << std::endl;
+    //std::cout << ": " << bestFbConfig-> << std::endl;
 	//free the FBConfig list allocated by glXChooseFBConfig()
 	XFree(fbConfig);
 	//get a visual for that configuration
@@ -385,7 +405,6 @@ findModesAgain:
 		XF86VidModeSwitchToMode(xDisplay, xScreenId, &bestMode);
 		XF86VidModeSetViewPort(xDisplay, xScreenId, 0, 0);
 	}
-
 	//create actual window
 	xWindow = XCreateWindow(xDisplay, xRootWindow, 0, 0, w, h, 0, visual->depth, InputOutput, visual->visual, windowAttributes, &setWindowAttributes);
 	if (xWindow == 0) {
@@ -395,13 +414,10 @@ findModesAgain:
 		std::cerr << "Failed to create an X11 window!" << std::endl;
 		return;
 	}
-
 	//free visual data
 	XFree(visual);
-
 	//set window name
 	XStoreName(xDisplay, xWindow, title.c_str());
-
 	//show/map window and grab cursor
 	if (full) {
 		XWarpPointer(xDisplay, None, xWindow, 0, 0, 0, 0, 0, 0);
@@ -415,7 +431,6 @@ findModesAgain:
 		XSetStandardProperties(xDisplay, xWindow, title.c_str(), None, 0, nullptr, 0, nullptr);
 		XMapRaised(xDisplay, xWindow);
 	}
-
 	//Create rendering context for it and activate it
 	context = std::shared_ptr<GLContext>(new GLContext(xDisplay, xWindow, bestFbConfig));
 	if (!context->isValid()) {
@@ -423,7 +438,6 @@ findModesAgain:
 		std::cout << "Failed to create a render context!" << std::endl;
 		return;
 	}
-
 	//set up some standard OpenGL stuff
 	setup();
 }
@@ -432,6 +446,8 @@ findModesAgain:
 
 void GLWindow::setup()
 {
+	//make our context current
+	context->makeCurrent();
 	//set up view matrices and other OpenGL stuff
 	GLdouble gldAspect = ((GLdouble)w/(GLdouble)h);
 	glMatrixMode(GL_PROJECTION);
@@ -462,7 +478,6 @@ void GLWindow::destroy()
 {
 	//free context
 	context->destroy();
-
 #if defined(WIN32) || defined(_WIN32)
 	//switch back to old display mode
 	if (full)	{

@@ -41,6 +41,7 @@ protected:
 	int versionMajor; //!<OpenGL version information
 	int versionMinor; //!<OpenGL version information
 	std::vector<std::string> extensions;
+    void getImplementationInfo();
 	void getExtensions();
 
 	struct Binding {

@@ -75,13 +75,11 @@ void testLoop(std::shared_ptr<ContextBase> & c, std::shared_ptr<WindowBase> & w,
         std::cout << "Default rendering";
     }
     std::cout << ", ";
-
     unsigned int startTicks = Timing::getTimeMsui();
     //draw loop
     do {
 		//make context current
 		context->makeCurrent();
-
         if (test) {
             test->pre();
         }
@@ -90,20 +88,15 @@ void testLoop(std::shared_ptr<ContextBase> & c, std::shared_ptr<WindowBase> & w,
 			context->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glViewport(0, 0, w->getWidth(), w->getHeight());
         }
-
         //clear framebuffer
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		drawTriangle();
-
         if (test) {
             test->post();
         }
-
         //swap backbuffer to screen
         window->swap();
-
         //show frames/sec in title
         frames++;
         unsigned long endTicks = Timing::getTimeMsui();
@@ -148,9 +141,7 @@ bool setup()
     #endif
 #endif
 	window->setSwapInterval(0);
-
 	context = window->getContext();
-
 	//check if we have the needed extensions
 /*	if (!context->isExtensionAvailable("GL_EXT_framebuffer_object") && !context->isExtensionAvailable("GL_ARB_framebuffer_object")) {
 		std::cout << "Your system is lacking the extension GL_EXT_framebuffer_object. Exiting." << std::endl;
@@ -174,14 +165,12 @@ bool setup()
 		std::cout << "Your system is lacking the extension GL_ARB_texture_non_power_of_two. Exiting." << std::endl;
 		return false;
 	}*/
-
 	//create tests
 	tests[0] = new Test_glReadPixels(context);
 #ifdef USE_OPENGL_DESKTOP
 	tests[1] = new Test_glGetTexImage(context);
 	tests[2] = new Test_PBO(context);
 #endif
-
 	//create shaders
 	std::string errors;
 	triangleShader = context->createShader(vertexCode, fragmentCode, errors);
@@ -194,7 +183,6 @@ bool setup()
 		std::cout << "Failed to create the necessary shader. Exiting." << std::endl;
 		return false;
 	}
-
 	return true;
 }
 
@@ -219,7 +207,6 @@ void interactive()
 {
 	//make context current
 	context->makeCurrent();
-
 	if (currentTest) {
 		currentTest->pre();
 	}
@@ -228,20 +215,15 @@ void interactive()
 		context->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, window->getWidth(), window->getHeight());
 	}
-
 	//clear framebuffer
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	drawTriangle();
-
 	if (currentTest) {
 		currentTest->post();
 	}
-
 	//swap backbuffer to screen
 	window->swap();
-
 	//now change test if user wanted to
 	currentTest = newTest;
 }

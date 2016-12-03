@@ -185,6 +185,7 @@ else()
         LIST(APPEND TARGET_LIBRARIES
             dl
             Xxf86vm
+            X11
         )	
     endif()
     if(${GLSystem} MATCHES "Desktop OpenGL")

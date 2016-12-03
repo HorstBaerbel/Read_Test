@@ -16,7 +16,7 @@ class GLTexture2D
 	bool valid;
 
 public:
-	GLTexture2D(std::shared_ptr<ContextBase> & c, const int width, const int height, const GLint internalFormat = GL_RGBA, const GLenum format = GL_RGBA, const GLenum type = GL_UNSIGNED_BYTE);
+	GLTexture2D(std::shared_ptr<ContextBase> & c, const int width, const int height, const GLint internalFormat = GL_RGBA8, const GLenum format = GL_RGBA, const GLenum type = GL_UNSIGNED_BYTE);
 
 	GLsizei getWidth() const;
 	GLsizei getHeight() const;

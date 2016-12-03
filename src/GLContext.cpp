@@ -33,6 +33,15 @@ GLContext::GLContext(HDC dc)
 
 #elif defined(__linux__)
 
+typedef GLXContext (GLAPIENTRYP glXCreateContextAttribsProc)(Display *dpy, GLXFBConfig config, GLXContext share_context, Bool direct, const int *attrib_list);
+
+static bool ctxErrorOccurred = false;
+static int contextErrorHandler(Display * /*display*/, XErrorEvent * event)
+{
+    ctxErrorOccurred = true;
+    return 0;
+}
+
 GLContext::GLContext(Display * display, Window & window, GLXFBConfig & fbConfig)
 	: xDisplay(nullptr), xWindow(0), context(nullptr), glxVersionMajor(1), glxVersionMinor(0)
 {
@@ -45,33 +54,61 @@ GLContext::GLContext(Display * display, Window & window, GLXFBConfig & fbConfig)
 		std::cout << "GLX version 1.3 or higher needed!" << std::endl;
 		return;
 	}
-	//try to create an OpenGL <= 2.1 context first
-	GLXContext gl2Context = glXCreateNewContext(display, fbConfig, GLX_RGBA_TYPE, nullptr, GL_TRUE);
-	if (gl2Context == nullptr) {
-		std::cout << "Failed to create a render context!" << std::endl;
-		return;
-	}
-	//get function bindings now. we need this for glXCreateContextAttribs
-	if (!getBindings()) {
-		std::cout << "Failed to get all function bindings!" << std::endl;
-	}
+    //try to bind glXGetProcAddress or glXGetProcAddressARB
+    //not that is not necessary to create or make current to a context before...
+    glXCreateContextAttribsProc glXCreateContextAttribs = nullptr;
+    glXCreateContextAttribs = (glXCreateContextAttribsProc)glXGetProcAddress((const GLubyte *) "glXCreateContextAttribs");
+    if (glXCreateContextAttribs == nullptr) {
+        glXCreateContextAttribs = (glXCreateContextAttribsProc)glXGetProcAddress((const GLubyte *) "glXCreateContextAttribsARB");
+    }
+    // Set global error handler. All display connections in all threads of a process use the same error handler, 
+    // so be sure to guard against other threads issuing X commands while this code is running.
+    int (*oldHandler)(Display*, XErrorEvent*) = XSetErrorHandler(&contextErrorHandler);
 	//check if glXCreateContextAttribs is available
 	if (glXCreateContextAttribs != nullptr) {
-		//create a GL >= 3.0 context
+        //create a GL >= 3.0 context
+        std::cout << "glXCreateContextAttribs is available.\nTrying to get an OpenGL 3.0 context... ";
 		int attribs[] = { GLX_CONTEXT_MAJOR_VERSION_ARB, 3, GLX_CONTEXT_MINOR_VERSION_ARB, 0, 0};
-		GLXContext gl3Context = glXCreateContextAttribs(display, fbConfig, 0, true, &attribs[0]);
-		//if that worked, destroy the 2.1 context
-		if (gl3Context != nullptr) {
-			glXDestroyContext(display, gl2Context); //We can destroy the GL 2.0 context once the 3.0 one has bene created
-		}
-		context = gl3Context;
-		//get function bindings again now, as we have a new context
-		if (!getBindings()) {
-			std::cout << "Failed to get all function bindings!" << std::endl;
-		}
+		context = glXCreateContextAttribs(display, fbConfig, 0, true, &attribs[0]);
+        if (context == nullptr || ctxErrorOccurred) {
+            std::cout << "failed!" << std::endl;
+            ctxErrorOccurred = false;
+        }
+        else {
+            std::cout << "worked." << std::endl;
+        }
 	}
-	else {
-		context = gl2Context;
+	if (context == nullptr || ctxErrorOccurred) {
+        //try to create an OpenGL <= 2.1 context
+        std::cout << "Trying to get an OpenGL 2.1 context... ";
+	    context = glXCreateNewContext(display, fbConfig, GLX_RGBA_TYPE, nullptr, GL_TRUE);
+        if (context == nullptr || ctxErrorOccurred) {
+            std::cout << "failed!" << std::endl;
+            ctxErrorOccurred = false;
+        }
+        else {
+            std::cout << "worked." << std::endl;
+        }
+	}
+    // sync to ensure any errors generated are processed.
+    XSync(display, false);
+    //reset error handler
+    XSetErrorHandler(oldHandler);
+    //check if we successfully created a context
+    if (context == nullptr) {
+	    std::cout << "Failed to create a render context!" << std::endl;
+	    return;
+    }
+    // check if we got a direct context
+    if (glXIsDirect(display, context)) {
+        std::cout << "Got a direct context." << std::endl;
+    }
+    else {
+        std::cout << "Got an indirect context." << std::endl;
+    }
+	//get function bindings now
+	if (!getBindings()) {
+		std::cout << "Failed to get all function bindings!" << std::endl;
 	}
 	//try to make render context current
 	if (!glXMakeCurrent(display, window, context)) {
@@ -79,7 +116,8 @@ GLContext::GLContext(Display * display, Window & window, GLXFBConfig & fbConfig)
 		std::cout << "Failed to make render context current!" << std::endl;
 		return;
 	}
-	//get extensions
+    //get info about and extensions
+    getImplementationInfo();
 	getExtensions();
 	//setup members
 	xDisplay = display;

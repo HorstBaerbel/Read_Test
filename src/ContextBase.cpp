@@ -86,17 +86,34 @@ ContextBase::ContextBase()
 	#ifdef USE_OPENGL_DESKTOP
 		bindings.push_back(make_binding((void (GLAPIENTRYP*)(void))&glXSwapInterval, "glXSwapInterval"));
 		bindings.push_back(make_binding((void (GLAPIENTRYP*)(void))&glXCreateContextAttribs, "glXCreateContextAttribs"));
+        bindings.push_back(make_binding((void (GLAPIENTRYP*)(void))&glXCreateContextAttribs, "glXCreateContextAttribsARB"));
 	#endif
 #endif
 	}
 }
 
-void ContextBase::getExtensions()
+void ContextBase::getImplementationInfo()
 {
+    makeCurrent();
 #ifdef USE_OPENGL_DESKTOP
 	glGetIntegerv(GL_MAJOR_VERSION, &versionMajor);
 	glGetIntegerv(GL_MINOR_VERSION, &versionMinor);
-	std::cout << "OpenGL version " << versionMajor << "." << versionMinor << std::endl;
+    auto versionString = glGetString(GL_VERSION);
+    auto vendorString = glGetString(GL_VENDOR);
+    auto rendererString = glGetString(GL_RENDERER);
+    auto glslString = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	std::cout << "OpenGL version: " << versionString << std::endl;
+	std::cout << "Vendor: " << vendorString << std::endl;
+	std::cout << "Renderer: " << rendererString << std::endl;
+	std::cout << "GLSL version: " << glslString << std::endl;
+#endif
+}
+
+void ContextBase::getExtensions()
+{
+    makeCurrent();
+#ifdef USE_OPENGL_DESKTOP
+	glGetIntegerv(GL_MAJOR_VERSION, &versionMajor);
 	//check opengl version
 	if (versionMajor >= 3) {
 		//opengl version starting with 3.0 should provide glGetStringi
@@ -139,6 +156,11 @@ void ContextBase::getExtensions()
 				startOffset = endOffset + 1;
 			} while(endOffset != std::string::npos);
 		}
+	}
+	//check for errors
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR) {
+        std::cout << "Error 0x" << std::hex << error << " while getting extensions" << std::endl;
 	}
     //dump extensions to stdout
     std::cout << "GL Extensions available: " << std::endl;
@@ -210,7 +232,6 @@ ContextBase::Binding ContextBase::make_binding(void (GLAPIENTRYP * adressOfFunct
 bool ContextBase::getBindings()
 {
 	bool result = true;
-
 	//clear all function pointers to null first
 	std::vector<Binding>::const_iterator bit = bindings.cbegin();
     while (bit != bindings.cend()) {
@@ -270,7 +291,6 @@ bool ContextBase::getBindings()
 		}
 		++bit;
 	}
-
 	return result;
 }
 
@@ -317,7 +337,6 @@ GLuint ContextBase::createShader(const std::string & vertexCode, const std::stri
     GLint result;
     GLuint vertexShader = 0;
     GLuint fragmentShader = 0;
-
     //make context current first
     makeCurrent();
     //create program

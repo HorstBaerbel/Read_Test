@@ -31,7 +31,7 @@ public:
 
 	bool attach(const GLenum attachmentPoint, std::shared_ptr<GLTexture2D> & texture);
 	//bool attach(const GLenum attachmentPoint, std::shared_ptr<GLTextureDepth> & texture);
-	const Attachment & getAttachment(const GLenum attachmentPoint) const;
+	Attachment getAttachment(const GLenum attachmentPoint) const;
 
 	GLsizei getWidth() const;
 	GLsizei getHeight() const;

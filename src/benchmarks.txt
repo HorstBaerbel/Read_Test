@@ -101,6 +101,22 @@ TEST: Read from PBOs asynchronously using glReadPixels. Reading disabled., frame
 TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_BGRA., frame time 1.48 ms
 TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_RGBA., frame time 16.57 ms
 
+Ubuntu 16.04.01
+----------------------------------------------------------------------
+- CPU: Intel Core i5 480M
+- GPU: Integrated HD Graphics, Driver Mesa DRI Intel(R) Ironlake Mobile 
+- OpenGL: 2.1, GLX 1.4, MESA 11.2.0
+- vsync turned off by "export vblank_mode=0"
+TEST: Default rendering, frame time 1.08 ms
+TEST: Read using glReadPixels. Reading disabled., frame time 1.04 ms
+TEST: Read using glReadPixels. Reading GL_BGRA., frame time 1.48 ms
+TEST: Read using glReadPixels. Reading GL_RGBA., frame time 1.42 ms
+TEST: Read using glGetTexImage. Reading disabled., frame time 1.03 ms
+TEST: Read using glGetTexImage. Reading GL_BGRA., frame time 1.44 ms
+TEST: Read using glGetTexImage. Reading GL_RGBA., frame time 1.42 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading disabled., frame time 1.04 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_BGRA., frame time 1.07 ms
+TEST: Read from PBOs asynchronously using glReadPixels. Reading GL_RGBA., frame time 1.07 ms
 
 Raspbian
 -----------------------------------------------------------------------
